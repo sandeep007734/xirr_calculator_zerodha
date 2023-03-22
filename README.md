@@ -10,7 +10,7 @@ It takes voucher comment Bank Receipts as negative cash flow and withdrawals as 
 1. Open console.zerodha.com
 2. Click on Funds in the header banner to reveal the dropdown manner
 3. Click on Statement from the dropdown menu
-4. Select the date range. For now XIRR can only be calculated since the beginning of the account.
+4. Select the date range.
 5. Download the csv format statements file
 
 ## How to get current Account value
@@ -19,22 +19,23 @@ It takes voucher comment Bank Receipts as negative cash flow and withdrawals as 
 
 ## Requirements
 Python 3.x
-Modules: PyXIRR and datetime
-
-Install Pyxirr: pip install pyxirr
-Install datetime: pip install DateTime
+pip3 install -r requirements.txt
 
 ## How to run the tool
 1. Download the tool from the GitHub repo
-2. Copy Zerodha funds ledger to the same folder
+2. Copy Zerodha funds ledger (CSV) to the same folder
 3. Open command prompt or Windows Powershell in the same folder. One way is to hold shift key, right click in the folder and select 'Open Powershell window here'
-5. Run the python script by entering 'python .\xirr_cal_pyxirr.py' in powershell
-6. Enter the date in 'dd-mm-yyyy' format, Account value and file name of the zerodha funds statement
+5. Run the python script by entering 'python3 .\xirr_cal_pyxirr.py <csvfile>' in powershell
+6. It will automatically pick the current date.
+7. Account value of the current holdings
 
-## SciPy based tool
-You can find the SciPy based python file under the SciPy folder. It works but will no longer be updated. Simply because PyXIRR module is faster and simpler. Adding that in case people want to create their own versions or include in their workflows. SciPy might be more versatile in that case.
+
 
 ## Acknowledgements
 
+Forked from:
 User @Anexen (Alexander Volkovsky) for the PyXIRR library (https://github.com/Anexen/pyxirr)
 StackOverflow question and answer https://stackoverflow.com/questions/46668172/calculating-xirr-in-python
+
+Modified by:
+Sandeep
