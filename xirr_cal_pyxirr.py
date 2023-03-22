@@ -1,21 +1,11 @@
-# Copyright 2022 rajitsaria
-# 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# 
-#     http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import pandas as pd
 from pyxirr import xirr
 import datetime
+import sys
 
+if len(sys.argv)<2:
+    print("Please enter the file name as an argument")
+    sys.exit()
 
 def listOfTuples(list1, list2):
     #make a list of tuples having an element from each list
@@ -28,10 +18,22 @@ def readLedger(filename):
     dateColumns = ['posting_date']
     return pd.read_csv(filename, sep=',', header = 0, names = headers, dtype = dataType, parse_dates = dateColumns, dayfirst=True).dropna()
 
+# combine two list column wise and return a dataframe with the combined list
+def combineList(list1, list2):
+    return pd.DataFrame(listOfTuples(list1, list2))
+
+# given a list of dates, remove the timestamp from the date and return modified list
+def removeTimestamp(dateList):
+    return [date.date() for date in dateList]
+
 #take inputs from user
-endDate = pd.to_datetime(input("Enter Date for end of investment period in dd-mm-yyyy format: "), format= '%d-%m-%Y')
+endDate = datetime.datetime.now()
+print(f"Using current date as end date: {endDate}")
+# endDate = pd.to_datetime(input("Enter Date for end of investment period in dd-mm-yyyy format: "), format= '%d-%m-%Y')
 fundBalance = float(input("Enter the final portfolio value including fund balance: "))
-ledgerData = readLedger(input("Enter funds ledger name: "))
+# ledgerData = readLedger(input("Enter funds ledger name: "))
+print(f"Using ledger file: {sys.argv[1]}")
+ledgerData = readLedger(sys.argv[1])
 
 dateLedger = list(ledgerData["posting_date"])
 voucherData = ledgerData['voucher_type'].tolist()
@@ -52,5 +54,10 @@ for entryIndex, voucher in enumerate(voucherData):
 
 dateLedger.append(endDate)
 combinedFlow.append(fundBalance)
-calculatedXIRR = xirr(dateLedger, combinedFlow)
-print(calculatedXIRR*100)
+
+combineList(removeTimestamp(dateLedger), combinedFlow).to_csv("xirr_data.csv", index=False, header=False)
+
+calculatedXIRR = xirr(dateLedger, combinedFlow)*100
+print(f"Calculated XIRR: {round(calculatedXIRR,2)}%")
+# print(calculatedXIRR*100)
+
