@@ -35,6 +35,15 @@ fundBalance = float(input("Enter the final portfolio value including fund balanc
 print(f"Using ledger file: {sys.argv[1]}")
 ledgerData = readLedger(sys.argv[1])
 
+# print(list(ledgerData))
+with pd.option_context('display.max_rows', None,
+                       'display.max_columns', None,
+                       'display.precision', 3,
+                       ):
+    # print(ledgerData["vou"][["posting_date","voucher_type","debit","credit"]])
+    mod_ledgerData = ledgerData[(ledgerData["voucher_type"] == "Bank Receipts") | (ledgerData["voucher_type"] == "Bank Payments")][["posting_date","voucher_type","debit","credit"]].sort_values(by="posting_date", ascending=False)
+    print(mod_ledgerData)
+
 dateLedger = list(ledgerData["posting_date"])
 voucherData = ledgerData['voucher_type'].tolist()
 debitData = ledgerData['debit'].tolist()
@@ -55,7 +64,8 @@ for entryIndex, voucher in enumerate(voucherData):
 dateLedger.append(endDate)
 combinedFlow.append(fundBalance)
 
-combineList(removeTimestamp(dateLedger), combinedFlow).to_csv("xirr_data.csv", index=False, header=False)
+# combineList(removeTimestamp(dateLedger), combinedFlow).to_csv("data/xirr_data.csv", index=False, header=False)
+mod_ledgerData.to_csv("data/xirr_data.csv", index=False, header=False)
 
 calculatedXIRR = xirr(dateLedger, combinedFlow)*100
 print(f"Calculated XIRR: {round(calculatedXIRR,2)}%")
